@@ -47,7 +47,7 @@ export class Ground {
 
   movePlanes() {
     this.mesh.children.forEach((mesh) => {
-      mesh.position.z -= 0.2;
+      mesh.position.z -= 0.3;
 
       if(mesh.position.z <= -1) {
         mesh.position.z = this.lastPos;

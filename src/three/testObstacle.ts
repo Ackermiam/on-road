@@ -3,7 +3,8 @@ import {
   WebGLRenderer,
   PerspectiveCamera,
   Object3D,
-  DirectionalLight
+  DirectionalLight,
+  AmbientLight
 } from "three";
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -34,6 +35,10 @@ export class TestObstacle {
 
     const directionalLight = new DirectionalLight(0xffffff, 3);
     directionalLight.position.set(0, 10, 10).normalize();
+
+    const ambient = new AmbientLight();
+    ambient.intensity = 0.05;
+    this.scene.add(ambient);
 
     const obstacle = new Obstacle();
 

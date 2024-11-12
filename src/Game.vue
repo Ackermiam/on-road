@@ -35,15 +35,4 @@ onMounted(() => {
     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 1) 0px, transparent 50%),
     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 1) 0px, transparent 50%);
 }
-
-.button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: pink;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
 </style>

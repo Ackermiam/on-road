@@ -1,14 +1,15 @@
-import { PlaneGeometry, Mesh, MeshLambertMaterial } from "three";
+import { PlaneGeometry, Mesh, MeshBasicMaterial, DoubleSide } from "three";
 
 export class Obstacle {
   mesh: Mesh;
 
   constructor() {
-    const geometry = new PlaneGeometry();
-    const material = new MeshLambertMaterial({color: 0x0000ff});
-
-    const obstacle = new Mesh(geometry, material);
-    this.mesh = obstacle;
+    const geometry = new PlaneGeometry( 1, 1, 4, 4 );
+    const material = new MeshBasicMaterial( {color: 0xffff00, side: DoubleSide, wireframe: true} );
+    const plane = new Mesh( geometry, material );
+    plane.rotateX(Math.PI / 2 +.2)
+    plane.rotateZ(Math.PI / 2 +.2)
+    this.mesh = plane;
   }
 
   tick() {

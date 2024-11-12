@@ -55,7 +55,6 @@ export class TestObstacle {
   addChildren() {
     for (let i = 0; i < this.meshs.length; i++) {
       this.scene.add(this.meshs[i].mesh);
-      console.log('coucou')
     }
   }
 }

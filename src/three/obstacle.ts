@@ -13,7 +13,6 @@ export class Obstacle {
     });
     const plane = new Mesh(geometry, material);
     plane.rotateX(-Math.PI / 2);
-    //plane.rotateZ(Math.PI / 2 +.2);
     this.mesh = plane;
     this.browseVertices(this.mesh);
   }

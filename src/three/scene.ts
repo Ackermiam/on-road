@@ -34,7 +34,7 @@ export class Logic {
     ref.appendChild(this.renderer.domElement);
 
     const directionalLight = new DirectionalLight(0xffffff, 3);
-    directionalLight.position.set(0, 10, 10).normalize();
+    directionalLight.position.set(0, 10, 10);
 
     const ground = new Ground();
     const starship = new StarShip(this.mouseXPos);

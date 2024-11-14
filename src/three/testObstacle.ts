@@ -24,7 +24,7 @@ export class TestObstacle {
       45,
       window.innerWidth / window.innerHeight
     );
-    this.camera.position.set(0, 0, 3);
+    this.camera.position.set(1, 3, 10);
 
     this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setClearColor(0, 0);

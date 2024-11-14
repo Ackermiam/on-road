@@ -3,7 +3,7 @@ import {
   WebGLRenderer,
   PerspectiveCamera,
   Object3D,
-  DirectionalLight
+  DirectionalLight,
 } from "three";
 
 import { Ground } from "./ground.ts";

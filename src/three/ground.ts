@@ -1,4 +1,5 @@
-import { Object3D, MeshLambertMaterial, Mesh, PlaneGeometry } from "three";
+import { Object3D, MeshLambertMaterial, Mesh, PlaneGeometry, TextureLoader, } from "three";
+import {Obstacle} from "./obstacle";
 
 export class Ground {
   meshData: any[];
@@ -19,8 +20,9 @@ export class Ground {
   }
 
   createPlane(zPos: number) {
-    const geometry = new PlaneGeometry(10, 5, 1);
-    const material = new MeshLambertMaterial({ color: 0xff0000 });
+    const texture = new TextureLoader().load("textures/textcristal.jpg");
+    const geometry = new PlaneGeometry(10, 5, 3);
+    const material = new MeshLambertMaterial({ color: 0xffffff });
 
     const box = new Mesh(geometry, material);
 
@@ -30,18 +32,28 @@ export class Ground {
     this.mesh.add(box);
   }
 
+  createObstacle(zPos: number) {
+    const obstacle = new Obstacle();
+    obstacle.mesh.position.set(0, -0.1, zPos);
+
+    this.mesh.add(obstacle.mesh);
+  }
+
   instanceRoadBit() {
     for (let i = 0; i < 30; i++) {
       this.meshData.push({
-        zPos: i * 5.1,
+        zPos: i * 5,
       });
-      if(i === 29) this.lastPos = i * 5.1;
+      if(i === 29) this.lastPos = i * 5;
     }
   }
 
   instanceMesh() {
-    this.meshData.forEach((mesh) => {
+    this.meshData.forEach((mesh, index) => {
       this.createPlane(mesh.zPos);
+      if(index % 3 === 0) {
+        this.createObstacle(mesh.zPos)
+      }
     });
   }
 
@@ -54,6 +66,7 @@ export class Ground {
       }
     })
   }
+
 
   tick() {
     this.movePlanes();

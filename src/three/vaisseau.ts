@@ -10,7 +10,7 @@ export class StarShip {
     const material = new MeshLambertMaterial({color: 0x00FF00});
 
     const mesh = new Mesh(geometry, material);
-    mesh.position.set(0, 1, 10);
+    mesh.position.set(0, 0.5, 15);
 
     this.mesh = mesh;
   }
@@ -21,6 +21,6 @@ export class StarShip {
 
   moveStarship(xPos: number) {
     const x = (xPos / window.innerWidth) * 2 - 1;
-    this.mesh.position.set(- x * 3, 1, 10)
+    this.mesh.position.set(- x * 3, 0.5, 15)
   }
 }

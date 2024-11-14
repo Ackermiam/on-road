@@ -1,15 +1,24 @@
-import { PlaneGeometry, Mesh, Vector3, TextureLoader, MeshStandardMaterial, BufferAttribute, DoubleSide } from "three";
+import {
+  PlaneGeometry,
+  Mesh,
+  Vector3,
+  MeshStandardMaterial,
+  BufferAttribute,
+  DoubleSide,
+  TextureLoader,
+} from "three";
 
 export class Obstacle {
   mesh: Mesh;
 
   constructor() {
     this.mesh = new Mesh();
-    const texture = new TextureLoader().load("textures/stone.jpg");
-    const geometry = new PlaneGeometry(1, 1, 6, 6);
+    const texture = new TextureLoader().load("textures/textcristal.jpg");
+    const geometry = new PlaneGeometry(3.3, 3.3, 20, 20);
     const material = new MeshStandardMaterial({
       side: DoubleSide,
-      map: texture
+      map: texture,
+      color: 0x00ffe5,
     });
     const plane = new Mesh(geometry, material);
     plane.rotateX(-Math.PI / 2);
@@ -25,27 +34,21 @@ export class Obstacle {
     const newVertices: number[] = [];
 
     for (let i = 0; i < vertices.length / 3; i++) {
-      const choseIfChange = Math.floor(Math.random() * 2);
-      const random = Math.random() * 0.4;
+      const choseIfChange = Math.random() * 1;
+      const multiplier = Math.floor(Math.random() * 3);
+      const verticePosition = new Vector3().fromBufferAttribute(
+        positionAttribute,
+        i
+      );
+      const dist = verticePosition.distanceTo(new Vector3(0, 0, 0));
 
-      const verticePosition = new Vector3().fromBufferAttribute(positionAttribute, i);
-
-      if(i % 7 === 0 || i < 7 || i >= 42 && i <= 48) {
-
-        verticePosition.z = 0;
-        newVertices.push(...verticePosition)
+      if (dist < 1.65 && choseIfChange > 0.75) {
+        let intensity = dist / (3.3 / 2);
+        verticePosition.z = Math.abs(intensity - 1) * multiplier;
+        newVertices.push(...verticePosition);
       } else {
-        if (choseIfChange === 1) {
-          verticePosition.z = random;
-          newVertices.push(...verticePosition)
-
-        } else {
-          newVertices.push(...verticePosition)
-        }
-      }
-
-      if(i < 7) {
-        console.log(verticePosition)
+        verticePosition.z = 0;
+        newVertices.push(...verticePosition);
       }
     }
 

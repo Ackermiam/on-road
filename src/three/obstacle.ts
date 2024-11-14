@@ -1,4 +1,4 @@
-import { PlaneGeometry, Mesh, TextureLoader, MeshStandardMaterial, BufferAttribute, DoubleSide } from "three";
+import { PlaneGeometry, Mesh, Vector3, TextureLoader, MeshStandardMaterial, BufferAttribute, DoubleSide } from "three";
 
 export class Obstacle {
   mesh: Mesh;
@@ -20,22 +20,35 @@ export class Obstacle {
   tick() {}
 
   browseVertices(mesh) {
-    const vertices = mesh.geometry.getAttribute("position");
+    const positionAttribute = mesh.geometry.getAttribute("position");
+    const vertices = positionAttribute.array;
     const newVertices: number[] = [];
 
-    for (let i = 0; i < vertices.array.length; i++) {
+    for (let i = 0; i < vertices.length / 3; i++) {
       const choseIfChange = Math.floor(Math.random() * 2);
-      const random = Math.random() * 0.3;
+      const random = Math.random() * 0.4;
 
-      if (i % 3 === 2) {
-        choseIfChange === 1
-          ? newVertices.push(random)
-          : newVertices.push(vertices.array[i]);
+      const verticePosition = new Vector3().fromBufferAttribute(positionAttribute, i);
+
+      if(i % 7 === 0 || i < 7 || i >= 42 && i <= 48) {
+
+        verticePosition.z = 0;
+        newVertices.push(...verticePosition)
       } else {
-        newVertices.push(vertices.array[i]);
+        if (choseIfChange === 1) {
+          verticePosition.z = random;
+          newVertices.push(...verticePosition)
+
+        } else {
+          newVertices.push(...verticePosition)
+        }
+      }
+
+      if(i < 7) {
+        console.log(verticePosition)
       }
     }
-    console.log(vertices)
+
     const pushVertices = new Float32Array([...newVertices]);
     mesh.geometry.setAttribute(
       "position",

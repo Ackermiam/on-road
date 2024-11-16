@@ -1,4 +1,4 @@
-import { Object3D, MeshLambertMaterial, Mesh, PlaneGeometry, TextureLoader, } from "three";
+import { Object3D, MeshLambertMaterial, Mesh, PlaneGeometry } from "three";
 import {Obstacle} from "./obstacle";
 
 export class Ground {
@@ -22,7 +22,7 @@ export class Ground {
   createPlane(zPos: number) {
     //const texture = new TextureLoader().load("textures/textground.jpg");
     const geometry = new PlaneGeometry(13, 5, 3);
-    const material = new MeshLambertMaterial({ color: 0x000000 });
+    const material = new MeshLambertMaterial({ color: 0xfffffff });
 
     const box = new Mesh(geometry, material);
 

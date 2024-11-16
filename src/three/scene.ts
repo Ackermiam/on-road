@@ -4,6 +4,7 @@ import {
   PerspectiveCamera,
   Object3D,
   DirectionalLight,
+  AmbientLight
 } from "three";
 
 import { Ground } from "./ground.ts";
@@ -35,16 +36,23 @@ export class Logic {
 
     const directionalLight = new DirectionalLight(0xffffff, 3);
     directionalLight.position.set(0, 10, 10);
+    this.scene.add(directionalLight);
+
+    const ambient = new AmbientLight();
+    ambient.intensity = 0.05;
+    this.scene.add(ambient);
 
     const ground = new Ground();
-    const starship = new StarShip(this.mouseXPos);
-
     this.meshs.push(ground);
-    this.meshs.push(starship);
 
-    this.scene.add(directionalLight);
-    this.addChildren();
-    //this.tickChildren();
+    const starship = new StarShip();
+
+    const loadStarship = async () => {
+      await starship.loadMesh()
+      this.meshs.push(starship);
+      this.addChildren();
+    }
+    loadStarship();
     this.tick();
   }
 

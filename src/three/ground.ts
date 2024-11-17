@@ -21,8 +21,8 @@ export class Ground {
 
   createPlane(zPos: number) {
     //const texture = new TextureLoader().load("textures/textground.jpg");
-    const geometry = new PlaneGeometry(13, 5, 3);
-    const material = new MeshLambertMaterial({ color: 0xfffffff });
+    const geometry = new PlaneGeometry(13, 8, 3);
+    const material = new MeshLambertMaterial({ color: 0x05164a });
 
     const box = new Mesh(geometry, material);
 
@@ -43,9 +43,9 @@ export class Ground {
   instanceRoadBit() {
     for (let i = 0; i < 30; i++) {
       this.meshData.push({
-        zPos: i * 4.8,
+        zPos: i * 7.8,
       });
-      if(i === 29) this.lastPos = i * 4.8;
+      if(i === 29) this.lastPos = i * 7.8;
     }
   }
 

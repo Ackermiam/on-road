@@ -25,21 +25,23 @@ export class Logic {
       45,
       window.innerWidth / window.innerHeight
     );
-    this.camera.position.set(0, 5, -2);
+    this.camera.position.set(0, 5, -3);
     this.camera.lookAt(0, 5, 0);
 
     this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setClearColor(0, 0);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    const resizeCanvas = window.devicePixelRatio > 1;
+    this.renderer.setSize(window.innerWidth, window.innerHeight, resizeCanvas)
 
     ref.appendChild(this.renderer.domElement);
 
-    const directionalLight = new DirectionalLight(0xffffff, 3);
-    directionalLight.position.set(0, 10, 10);
+    const directionalLight = new DirectionalLight(0xffffff, 2);
+    directionalLight.position.set(0, 5, 10);
     this.scene.add(directionalLight);
 
     const ambient = new AmbientLight();
-    ambient.intensity = 0.05;
+    ambient.intensity = 0.01;
     this.scene.add(ambient);
 
     const ground = new Ground();
@@ -53,6 +55,9 @@ export class Logic {
       this.addChildren();
     }
     loadStarship();
+    this.setView();
+
+    this.registerEventListeners();
     this.tick();
   }
 
@@ -81,5 +86,20 @@ export class Logic {
     window.addEventListener("mousemove", (e) => {
       this.mouseXPos = e.clientX;
     })
+    window.addEventListener('touchmove', (e) => {
+      this.mouseXPos = e.touches[0].clientX
+    })
+  }
+
+  setView() {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  registerEventListeners() {
+    window.onresize = () => {
+      this.setView();
+    };
   }
 }

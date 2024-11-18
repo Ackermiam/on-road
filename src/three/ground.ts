@@ -1,15 +1,29 @@
-import { Object3D, MeshLambertMaterial, Mesh, PlaneGeometry } from "three";
-import {Obstacle} from "./obstacle";
+import { Object3D, ShaderMaterial, Mesh, PlaneGeometry, Clock } from "three";
+import { Obstacle } from "./obstacle";
+import ShaderFrag from "../shader/shader.frag?raw";
+import ShaderVert from "../shader/shader.vert?raw";
 
 export class Ground {
   meshData: any[];
   mesh: Object3D;
   lastPos: number;
+  clock: Clock;
+  material: ShaderMaterial;
 
   constructor() {
+    this.uniform = [];
     this.lastPos = 0;
     this.mesh = new Object3D();
     this.meshData = [];
+    this.clock = new Clock();
+    this.material = new ShaderMaterial({
+      uniforms: {
+        u_time: { value: 0 },
+      },
+      vertexShader: ShaderVert,
+      fragmentShader: ShaderFrag,
+      transparent: true
+    });
 
     this.generateRoad();
   }
@@ -19,15 +33,13 @@ export class Ground {
     this.instanceMesh();
   }
 
-  createPlane(zPos: number) {
-    //const texture = new TextureLoader().load("textures/textground.jpg");
-    const geometry = new PlaneGeometry(13, 8, 3);
-    const material = new MeshLambertMaterial({ color: 0x05164a });
+  createPlane() {
+    const geometry = new PlaneGeometry(13, 260, 3);
 
-    const box = new Mesh(geometry, material);
+    const box = new Mesh(geometry, this.material);
 
     box.rotateX(-Math.PI / 2);
-    box.position.set(0, 0, zPos);
+    box.position.set(0, 0, 120);
 
     this.mesh.add(box);
   }
@@ -43,33 +55,42 @@ export class Ground {
   instanceRoadBit() {
     for (let i = 0; i < 30; i++) {
       this.meshData.push({
-        zPos: i * 7.8,
+        zPos: i * 8,
       });
-      if(i === 29) this.lastPos = i * 7.8;
+      if (i === 29) this.lastPos = i * 8;
     }
   }
 
   instanceMesh() {
+    this.createPlane();
     this.meshData.forEach((mesh, index) => {
-      this.createPlane(mesh.zPos);
-      if(index % 3 === 0) {
-        this.createObstacle(mesh.zPos)
+      if (index % 3 === 0) {
+        this.createObstacle(mesh.zPos);
       }
     });
   }
 
   movePlanes() {
-    this.mesh.children.forEach((mesh) => {
-      mesh.position.z -= 0.3;
+    this.mesh.children.forEach((mesh, index) => {
+      mesh.position.z -= 0.7;
 
-      if(mesh.position.z <= -1) {
+      if(index === 0) {
+        mesh.position.z = 120;
+      }
+      if (mesh.position.z <= -1) {
         mesh.position.z = this.lastPos;
       }
-    })
+
+
+    });
   }
 
+  getTime() {
+    this.material.uniforms.u_time.value = this.clock.getElapsedTime() / 2;
+  }
 
   tick() {
     this.movePlanes();
+    this.getTime();
   }
 }

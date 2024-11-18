@@ -58,13 +58,13 @@ export class Logic {
     this.setView();
 
     this.registerEventListeners();
+    this.getMousePos();
     this.tick();
   }
 
   tick() {
     this.renderer.render(this.scene, this.camera);
     this.tickChildren();
-    this.getMousePos();
     requestAnimationFrame(() => {
       this.tick();
     });

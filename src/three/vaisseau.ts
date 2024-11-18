@@ -24,11 +24,9 @@ export class StarShip {
   async loadMesh() {
     const gltf = await this.loader.loadAsync("/on-road/models/starship/scene.gltf");
     this.mesh = gltf.scene;
-    console.log(gltf.scene)
     this.mesh.scale.x = .2;
     this.mesh.scale.y = .2;
     this.mesh.scale.z = .2;
     this.mesh.position.y = 0;
-
   }
 }

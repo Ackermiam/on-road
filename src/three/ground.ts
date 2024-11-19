@@ -11,7 +11,6 @@ export class Ground {
   material: ShaderMaterial;
 
   constructor() {
-    this.uniform = [];
     this.lastPos = 0;
     this.mesh = new Object3D();
     this.meshData = [];
@@ -22,7 +21,7 @@ export class Ground {
       },
       vertexShader: ShaderVert,
       fragmentShader: ShaderFrag,
-      transparent: true
+      transparent: true,
     });
 
     this.generateRoad();
@@ -57,7 +56,9 @@ export class Ground {
       this.meshData.push({
         zPos: i * 8,
       });
-      if (i === 29) this.lastPos = i * 8;
+      if (i === 29) {
+        this.lastPos = i * 8;
+      }
     }
   }
 
@@ -74,14 +75,13 @@ export class Ground {
     this.mesh.children.forEach((mesh, index) => {
       mesh.position.z -= 0.7;
 
-      if(index === 0) {
+      if (index === 0) {
         mesh.position.z = 120;
       }
       if (mesh.position.z <= -1) {
         mesh.position.z = this.lastPos;
+        mesh.position.x = Math.random() * 8 - 3;
       }
-
-
     });
   }
 

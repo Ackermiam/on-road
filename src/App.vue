@@ -10,11 +10,6 @@ const game = ref();
 let logic;
 
 onMounted(() => {
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen();
-  } else if (document.documentElement.webkitRequestFullscreen) { // Safari
-    document.documentElement.webkitRequestFullscreen();
-  }
   logic = new Logic(game.value);
 });
 </script>

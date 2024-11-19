@@ -15,10 +15,14 @@ export class StarShip {
   }
 
   moveStarship(xPos: number) {
-    const x = (xPos / window.innerWidth) * 2 - 1;
-    this.mesh.position.set(- x * 8, 0.1, 20)
-    this.mesh.rotation.y = x / 6
-    this.mesh.rotation.z = - x / 5
+    if(xPos === 0) {
+      this.mesh.position.set(0.01, 0.1, 20)
+    } else {
+      const x = (xPos / window.innerWidth) * 2 - 1;
+      this.mesh.position.set(- x * 8, 0.1, 20)
+      this.mesh.rotation.y = x / 6
+      this.mesh.rotation.z = - x / 5
+    }
   }
 
   async loadMesh() {

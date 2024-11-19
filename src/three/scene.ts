@@ -58,13 +58,13 @@ export class Logic {
     this.setView();
 
     this.registerEventListeners();
-    this.getMousePos();
     this.tick();
   }
 
   tick() {
     this.renderer.render(this.scene, this.camera);
     this.tickChildren();
+    
     requestAnimationFrame(() => {
       this.tick();
     });
@@ -82,15 +82,6 @@ export class Logic {
     }
   }
 
-  getMousePos() {
-    window.addEventListener("mousemove", (e) => {
-      this.mouseXPos = e.clientX;
-    })
-    window.addEventListener('touchmove', (e) => {
-      this.mouseXPos = e.touches[0].clientX
-    })
-  }
-
   setView() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
@@ -101,5 +92,11 @@ export class Logic {
     window.onresize = () => {
       this.setView();
     };
+    window.addEventListener("mousemove", (e) => {
+      this.mouseXPos = e.clientX;
+    })
+    window.addEventListener('touchmove', (e) => {
+      this.mouseXPos = e.touches[0].clientX
+    })
   }
 }

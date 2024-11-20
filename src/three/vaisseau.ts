@@ -1,17 +1,20 @@
-import { Object3D } from "three";
+import { Object3D, Box3 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 export class StarShip {
   mesh: Object3D;
   loader: GLTFLoader;
+  boundingBox: Box3;
 
   constructor() {
     this.loader = new GLTFLoader();
     this.mesh = new Object3D();
+    this.boundingBox = new Box3();
   }
 
   tick(xPos: number) {
     this.moveStarship(xPos);
+    this.updateBoundingBox();
   }
 
   moveStarship(xPos: number) {
@@ -25,12 +28,15 @@ export class StarShip {
     }
   }
 
+  updateBoundingBox() {
+    this.boundingBox.setFromObject(this.mesh);
+  }
+
   async loadMesh() {
     const gltf = await this.loader.loadAsync("/on-road/models/starship/scene.gltf");
     this.mesh = gltf.scene;
-    this.mesh.scale.x = .2;
-    this.mesh.scale.y = .2;
-    this.mesh.scale.z = .2;
+    this.mesh.scale.set(0.2, 0.2, 0.2);
     this.mesh.position.y = 0;
+    this.updateBoundingBox();
   }
 }

@@ -4,7 +4,8 @@ import {
   PerspectiveCamera,
   Object3D,
   DirectionalLight,
-  AmbientLight
+  AmbientLight,
+  Box3
 } from "three";
 
 import { Ground } from "./ground.ts";
@@ -15,12 +16,17 @@ export class Logic {
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
   meshs: any[];
+  vaisseau: any[];
   mouseXPos: number;
+  obstacleCollisions: boolean[] = [];
+  life: number;
 
   constructor(ref: HTMLElement) {
     this.meshs = [];
+    this.vaisseau = [];
     this.scene = new Scene();
     this.mouseXPos = 0;
+    this.life = 10;
     this.camera = new PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight
@@ -51,20 +57,21 @@ export class Logic {
 
     const loadStarship = async () => {
       await starship.loadMesh()
-      this.meshs.push(starship);
+      this.vaisseau.push(starship);
       this.addChildren();
+      this.setView();
+      this.registerEventListeners();
+      this.tick();
     }
-    loadStarship();
-    this.setView();
 
-    this.registerEventListeners();
-    this.tick();
+    loadStarship();
   }
 
   tick() {
     this.renderer.render(this.scene, this.camera);
     this.tickChildren();
-    
+    this.isIntersect();
+
     requestAnimationFrame(() => {
       this.tick();
     });
@@ -74,18 +81,49 @@ export class Logic {
     for (let i = 0; i < this.meshs.length; i++) {
       this.scene.add(this.meshs[i].mesh);
     }
+    this.scene.add(this.vaisseau[0].mesh);
   }
 
   tickChildren() {
     for (let i = 0; i < this.meshs.length; i++) {
-      i === 1 ? this.meshs[i].tick(this.mouseXPos) : this.meshs[i].tick();
+      this.meshs[i].tick(this.mouseXPos);
     }
+    this.vaisseau[0].tick(this.mouseXPos)
   }
 
   setView() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  isIntersect() {
+    if (!this.vaisseau.length || !this.meshs.length) return;
+
+    const vaisseauBox = this.vaisseau[0].boundingBox;
+
+    vaisseauBox.setFromObject(this.vaisseau[0].mesh);
+
+    const ground = this.meshs.find((mesh) => mesh instanceof Ground) as Ground;
+    if (!ground) return;
+
+    for (let i = 0; i < ground.obstacles.length; i++) {
+      const { boundingBox } = ground.obstacles[i];
+      const isColliding = vaisseauBox.intersectsBox(boundingBox);
+
+      if (isColliding && !this.obstacleCollisions[i]) {
+        this.obstacleCollisions[i] = true;
+        this.life -= 1;
+        const event = new CustomEvent('collision', {
+          detail: this.life
+        })
+        window.dispatchEvent(event);
+      }
+
+      if (!isColliding && this.obstacleCollisions[i]) {
+        this.obstacleCollisions[i] = false;
+      }
+    }
   }
 
   registerEventListeners() {

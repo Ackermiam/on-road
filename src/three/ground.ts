@@ -1,5 +1,13 @@
-import { Object3D, ShaderMaterial, Mesh, PlaneGeometry, Clock, Box3 } from "three";
+import {
+  Object3D,
+  ShaderMaterial,
+  Mesh,
+  PlaneGeometry,
+  Clock,
+  Box3,
+} from "three";
 import { Obstacle } from "./obstacle";
+import { Coin } from "./coin";
 import ShaderFrag from "../shader/shader.frag?raw";
 import ShaderVert from "../shader/shader.vert?raw";
 
@@ -9,7 +17,12 @@ export class Ground {
   lastPos: number;
   clock: Clock;
   material: ShaderMaterial;
-  obstacles: { obstacle: Obstacle; boundingBox: Box3 }[];
+  obstacles: {
+    obstacle: Obstacle | Coin;
+    boundingBox: Box3;
+    typeOfObs: string;
+  }[];
+  speed: number;
 
   constructor() {
     this.lastPos = 0;
@@ -17,6 +30,7 @@ export class Ground {
     this.meshData = [];
     this.clock = new Clock();
     this.obstacles = [];
+    this.speed = 0.4;
     this.material = new ShaderMaterial({
       uniforms: {
         u_time: { value: 0 },
@@ -26,6 +40,15 @@ export class Ground {
       transparent: true,
     });
 
+    const interval = setInterval(() => {
+      this.speed += 0.05;
+    }, 20000);
+
+    window.addEventListener("collision", (e) => {
+      if (e.detail === 0) {
+        clearInterval(interval);
+      }
+    });
     this.generateRoad();
   }
 
@@ -50,15 +73,28 @@ export class Ground {
     const obstacle = new Obstacle();
     obstacle.mesh.position.set(random, -0.1, zPos);
     const boundingBox = new Box3().setFromObject(obstacle.mesh);
+    const typeOfObs = 'obstacle';
 
-    this.obstacles.push({ obstacle, boundingBox });
+    this.obstacles.push({ obstacle, boundingBox, typeOfObs });
+    this.mesh.add(obstacle.mesh);
+  }
+
+  async createCoin(zPos: number) {
+    const random = Math.random() * 8 - 3;
+    const obstacle = new Coin();
+    await obstacle.loadMesh();
+    obstacle.mesh.position.set(random, 0.5, zPos);
+    const boundingBox = new Box3().setFromObject(obstacle.mesh);
+    const typeOfObs = 'bonus';
+
+    this.obstacles.push({ obstacle, boundingBox, typeOfObs });
     this.mesh.add(obstacle.mesh);
   }
 
   instanceRoadBit() {
     for (let i = 0; i < 30; i++) {
       this.meshData.push({
-        zPos: i * 8,
+        zPos: 200 + i * 8,
       });
       if (i === 29) {
         this.lastPos = i * 8;
@@ -68,18 +104,19 @@ export class Ground {
 
   instanceMesh() {
     this.createPlane();
-setTimeout(() => {
-  this.meshData.forEach((mesh, index) => {
-    if (index % 3 === 0) {
-      this.createObstacle(mesh.zPos);
-    }
-  });
-}, 3000)
+
+    this.meshData.forEach((mesh, index) => {
+      if (index % 3 === 0) {
+        this.createObstacle(mesh.zPos);
+      } if(index % 2 === 0) {
+        this.createCoin(mesh.zPos);
+      }
+    });
   }
 
   movePlanes() {
     this.mesh.children.forEach((mesh, index) => {
-      mesh.position.z -= 0.2;
+      mesh.position.z -= this.speed;
 
       if (index === 0) {
         mesh.position.z = 120;
@@ -91,13 +128,6 @@ setTimeout(() => {
     });
 
     this.obstacles.forEach(({ obstacle, boundingBox }) => {
-      obstacle.mesh.position.z -= 0.7;
-
-      if (obstacle.mesh.position.z <= -1) {
-        obstacle.mesh.position.z = this.lastPos;
-        obstacle.mesh.position.x = Math.random() * 8 - 3;
-      }
-
       boundingBox.setFromObject(obstacle.mesh);
     });
   }

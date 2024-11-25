@@ -127,8 +127,14 @@ export class Ground {
       }
     });
 
-    this.obstacles.forEach(({ obstacle, boundingBox }) => {
-      boundingBox.setFromObject(obstacle.mesh);
+    this.obstacles.forEach(({ obstacle, boundingBox, typeOfObs }) => {
+      if(typeOfObs === 'obstacle') {
+        obstacle.mesh.scale.set(0.5, 0.5, 0.5);
+        boundingBox.setFromObject(obstacle.mesh);
+        obstacle.mesh.scale.set(1, 1, 1)
+      } else {
+        boundingBox.setFromObject(obstacle.mesh);
+      }
     });
   }
 

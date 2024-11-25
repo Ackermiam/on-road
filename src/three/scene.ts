@@ -128,11 +128,9 @@ export class Logic {
     if (!this.vaisseau.length || !this.meshs.length) return;
 
     const vaisseauBox = this.vaisseau[0].boundingBox;
-
     vaisseauBox.setFromObject(this.vaisseau[0].mesh);
 
     const ground = this.meshs.find((mesh) => mesh instanceof Ground);
-
     if (!ground) return;
 
     for (let i = 0; i < ground.obstacles.length; i++) {
